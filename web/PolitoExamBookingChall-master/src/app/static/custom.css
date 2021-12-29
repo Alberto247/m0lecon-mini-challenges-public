@@ -1,0 +1,203 @@
+body{
+	font-family: open sans, Arial;
+	font-size: 12px;
+	background-color: #fafafa;
+}
+
+/* FACOLTATIVO */
+header, #header{
+	margin-bottom: 40px;
+}
+
+/* Tipography */
+h1{
+	font-size:20px;
+}
+h2{
+	font-size:18px;
+}
+h3{
+	font-size:16px;
+}
+h4{
+	font-size:14px;
+}
+/*********************/
+
+
+#mainpanel{
+	min-height: 400px;
+	border:0px;
+	box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);	
+}
+.row {
+    margin: 0;
+}
+/*********************/
+
+/* PANELS FIX */
+.panel, .row {
+	margin-bottom:10px;
+    border-radius: 0px;
+}
+.panel-primary{
+	border-color:#003576;
+    border-radius: 0px;
+}
+.panel>.panel-heading {
+	padding: 3px 15px;
+    border-radius: 0px;
+	font-weight: bold;
+	font-size:14px;
+}
+.panel>.panel-heading-polito {
+	padding: 15px 15px;
+    border-radius: 0px;
+	font-weight: bold;
+	font-size:18px;
+	min-height:100px
+}
+.panel>.panel-heading-polito div.image{
+	display: inline-block;
+	vertical-align:top;
+	float:left;
+	margin-right:10px;
+}
+.panel>.panel-heading-polito div.title{
+	display: inline-block;
+	vertical-align:top;
+}
+.panel>.panel-heading-polito div.line{
+	background-color: #999;
+    height: 1px;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+.panel>.panel-heading-polito img{
+	max-width:80px;
+}
+.panel-primary>.panel-heading {
+    color: #fff;
+    background-color: #003576;
+    border-color: #003576;
+}
+
+.alert{
+	border-radius:0px;
+}
+/*********************/
+
+/* FORM & BUTTON FIX */
+.form-control, .btn{
+	border-radius: 0px;
+}
+
+.input-xs{
+	height: 25px;
+    padding: 0px 5px;
+    font-size: 12px;
+    line-height: 1.3;
+}
+.form-inline input, .form-inline select, .form-inline textarea{
+	margin-left:5px;
+}
+
+/* LIST GROUP */
+.list-group{
+	border-radius:0px;
+}
+.list-group-item:first-child {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+.list-group-item:last-child {
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.list-group-item {
+    padding: 5px 10px;
+}
+a.list-group-item{
+	cursor:pointer;
+	margin-bottom: 2px;
+}
+
+.list-group-item.active, .list-group-item.active:focus, .list-group-item.active:hover {
+    border-color:#ddd;
+}
+.list-group-item.mandatory{
+	cursor: not-allowed;
+}
+
+/*********************/
+
+/* Contextual backgrounds */
+p.bg-warning,p.bg-danger,p.bg-success,p.bg-success,p.bg-info{
+    padding: 15px;
+}
+/*********************/
+
+/* TABLE SCROLL */
+/* Per utilizzare, racchiudere la tabella in un div con questa classe */
+.table-scroll {
+    position: relative;
+    overflow-y: hidden !important;
+    width: 100%;
+}
+.table-nomargin{
+	margin:0px;
+}
+td.valignmiddle,th.valignmiddle{
+	vertical-align:middle!important;
+	text-align:center;
+}
+
+#accordion .panel-heading{
+		padding: 6px 15px;
+}
+
+p.highlighted{
+	color:#FF7C11;
+	font-weight:bold;    
+	margin-bottom: 3px;
+}
+
+#tabella_completa td{
+	padding-left:0px;
+}
+
+.glyphicons-big{
+  font-size:18px;
+  vertical-align: top;
+}
+
+.danger{
+	color:#d9534f;
+}
+.success{
+	color:#449d44;
+}
+.warning{
+	color:#ec971f;
+}
+
+/* ICONS */
+.glyphicon-info-sign{
+	font-size: 18px;
+	color:#FF8B10;
+	cursor: help;
+}
+.glyphicon-remove{
+	font-size: 18px;
+	color:#E40000;
+	cursor: pointer;
+}
+.glyphicon-ban-circle{
+	font-size: 18px;
+	color:#E40000;
+	cursor: help;
+}
+.imagelink{
+	cursor: pointer;	
+}

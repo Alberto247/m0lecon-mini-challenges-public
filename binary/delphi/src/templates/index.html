@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://unpkg.com/jquery.terminal/js/jquery.terminal.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/jquery.terminal/css/jquery.terminal.min.css"/>
+</head>
+<style>
+#terminal{
+  height: 90vh;
+}
+body {
+  background-color: black;
+}
+</style>
+<body>
+  <div id="terminal"></div>
+<script>
+  var resp;
+  async function check(word){
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        //console.log(this.responseText);
+        resp = this.responseText;
+      }
+    };
+    xhttp.open("POST", "secret", true);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send("secret=" + word);
+    await new Promise(r => setTimeout(r, 350));
+  }
+  $(function() {
+   $('#terminal').terminal({
+      hello: function() {
+        this.echo("Hello, world!");
+      },
+      clue: function(){
+        this.echo("*mmmmmmmmmmmmmmmmmmmmmm*... I'm not giving you clues! (or am I?)");
+      },
+      amicool: function(){
+        this.echo("Of course sweetie ;)");
+      },
+      oracle: async function() {
+        let ok = 0;
+        while (!ok){
+          secret = await this.read("> Secret: ");
+          if (secret=="exit") {
+            ok = 1;
+            break;
+          }
+          await check(secret);
+          this.echo(resp);
+          if (resp.includes("prophecy")){
+            ok = 1;
+          }
+        }
+      }
+   }, {
+      greetings: `
+DDDDDDDDDDDDD                            lllllll                     hhhhhhh               iiii
+D::::::::::::DDD                         l:::::l                     h:::::h              i::::i
+D:::::::::::::::DD                       l:::::l                     h:::::h               iiii
+DDD:::::DDDDD:::::D                      l:::::l                     h:::::h
+  D:::::D    D:::::D     eeeeeeeeeeee     l::::l ppppp   ppppppppp    h::::h hhhhh       iiiiiii
+  D:::::D     D:::::D  ee::::::::::::ee   l::::l p::::ppp:::::::::p   h::::hh:::::hhh    i:::::i
+  D:::::D     D:::::D e::::::eeeee:::::ee l::::l p:::::::::::::::::p  h::::::::::::::hh   i::::i
+  D:::::D     D:::::De::::::e     e:::::e l::::l pp::::::ppppp::::::p h:::::::hhh::::::h  i::::i
+  D:::::D     D:::::De:::::::eeeee::::::e l::::l  p:::::p     p:::::p h::::::h   h::::::h i::::i
+  D:::::D     D:::::De:::::::::::::::::e  l::::l  p:::::p     p:::::p h:::::h     h:::::h i::::i
+  D:::::D     D:::::De::::::eeeeeeeeeee   l::::l  p:::::p     p:::::p h:::::h     h:::::h i::::i
+  D:::::D    D:::::D e:::::::e            l::::l  p:::::p    p::::::p h:::::h     h:::::h i::::i
+DDD:::::DDDDD:::::D  e::::::::e          l::::::l p:::::ppppp:::::::p h:::::h     h:::::hi::::::i
+D:::::::::::::::DD    e::::::::eeeeeeee  l::::::l p::::::::::::::::p  h:::::h     h:::::hi::::::i
+D::::::::::::DDD       ee:::::::::::::e  l::::::l p::::::::::::::pp   h:::::h     h:::::hi::::::i
+DDDDDDDDDDDDD            eeeeeeeeeeeeee  llllllll p::::::pppppppp     hhhhhhh     hhhhhhhiiiiiiii
+                                                  p:::::p
+                                                  p:::::p
+                                                 p:::::::p
+                                                 p:::::::p
+                                                 p:::::::p
+                                                 ppppppppp
+
+
+  Magic words:
+    hello   - You can say hi
+
+    amicool - Tells you if you're cool or not
+
+    clue    - You can ask for a little help
+
+    oracle  - You can have a tailored and 100% accurate prediction thanks to our shamanistic knowledge
+              If you enter the right secret and believe in **MAGIC** that is
+              (The secret is only lowercase letters and underscores)
+              Enter exit to exit
+
+  `
+   });
+  });
+</script>
+</body>
+</html>

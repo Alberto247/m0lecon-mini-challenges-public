@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+	<h1>{% block title %} Welcome to Connexion {% endblock %}</h1>
+	<p>
+		This is our brand new messaging service, it supports text messages and chatbots, and all the messages are end-to-end encrypted:<br>
+		find out our encryption method <a href="{{url_for('encryption_print')}}">here</a>
+	</p>
+{% endblock %}

@@ -1,0 +1,7 @@
+version: "3.9"
+services:
+  delphi:
+    build: .
+    command: python secret.py
+    ports:
+      - "5000:5000"

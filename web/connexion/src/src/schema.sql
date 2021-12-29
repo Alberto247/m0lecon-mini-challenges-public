@@ -1,0 +1,32 @@
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS chats;
+DROP TABLE IF EXISTS messages;
+
+CREATE TABLE users (
+	userid INTEGER PRIMARY KEY AUTOINCREMENT,
+	username TEXT NOT NULL,
+	passwordhash TEXT NOT NULL,
+	seed TEXT NOT NULL
+);
+
+CREATE TABLE chats (
+	-- chatid INTEGER PRIMARY KEY AUTOINCREMENT,
+	user1 INTEGER,
+	user2 INTEGER,
+	created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	lastmodify TIMESTAMP NOT NULL,
+	PRIMARY KEY (user1,user2),
+	FOREIGN KEY (user1) REFERENCES users(userid),
+	FOREIGN KEY (user2) REFERENCES users(userid)
+);
+
+CREATE TABLE messages (
+	messageid INTEGER PRIMARY KEY AUTOINCREMENT,
+	-- chat INTEGER FOREIGN KEY REFERENCES chats(chatid),
+	sender INTEGER,
+	receiver INTEGER,
+	messagetime TIMESTAMP NOT NULL,
+	messagetext TEXT NOT NULL,
+	FOREIGN KEY (sender) REFERENCES users(userid),
+	FOREIGN KEY (receiver) REFERENCES users(userid)
+);

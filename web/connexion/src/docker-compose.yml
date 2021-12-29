@@ -1,0 +1,7 @@
+version: "3.6"
+services:
+  connexion:
+    build: .
+    restart: on-failure
+    ports:
+      - 5000:8000

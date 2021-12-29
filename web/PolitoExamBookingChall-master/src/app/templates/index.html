@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+
+    <title>Prenotazione Esami</title>
+
+    <!-- bootstrap metadata -->
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="cache-control" content="max-age=0">
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT">
+    <meta http-equiv="pragma" content="no-cache">
+
+    <link rel="stylesheet" type="text/css" href="static/css">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="static/bootstrap.min.css">
+
+
+    <!-- Bootstrap JS -->
+    <script type="text/javascript" src="static/bootstrap.min.js.download"></script>
+    <!-- Jquery JS -->
+    <script type="text/javascript" src="static/jquery-1.11.1.min.js.download"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="lib/html5shiv.min.js"></script>
+    <script src="lib/respond.min.js"></script>
+    <![endif]-->
+
+    <link rel="stylesheet" type="text/css" href="static/custom.css">
+
+    <link href="static/didattica.css" rel="stylesheet" type="text/css">
+    <link href="static/global.css" rel="stylesheet" type="text/css">
+    <link href="static/header_fluid.css" rel="stylesheet" type="text/css">
+
+    <script src="static/jquery-ui.min.js.download"></script>
+    <link rel="stylesheet" href="static/jquery-ui.min.css">
+    <link rel="stylesheet" href="static/jquery-ui.structure.min.css">
+    <!-- theme polito -->
+    <link rel="stylesheet" href="static/jquery-ui.theme.min.css">
+
+
+    <script type="text/javascript" src="static/contenutidin.js.download"></script>
+    <style type="text/css">.switchcontent {
+        display: block;
+        margin: 0px 0px 0px 0px;
+        padding: 0px 0px 0px 0px;
+        font-size: 11px;
+        font-weight: bold;
+        text-decoration: none;
+        border: #3399ff solid thin;
+    }</style>
+
+    <script type="text/javascript">
+
+        $(function () {
+            $("#prenotaDialog").dialog({
+                autoOpen: false
+            });
+        })
+
+
+        function onClickPrenota(id_verbale, cod_ins, d_ini_appel, d_fin_appel, data_appello, frequenza, nome_insegnamento, docente, mat_docente, data_ora_appello, aula, desc_tipo, note, posti_liberi) {
+
+
+            var data = {}
+            data['id_verbale'] = id_verbale;
+            data['cod_ins'] = cod_ins;
+            data['d_ini_appel'] = d_ini_appel;
+            data['d_fin_appel'] = d_fin_appel;
+            data['data_appello'] = data_appello;
+            data['frequenza'] = frequenza;
+            data['nome_insegnamento'] = nome_insegnamento;
+            data['docente'] = docente;
+            data['data_ora_appello'] = data_ora_appello;
+            data['desc_tipo'] = desc_tipo;
+            data['note'] = note;
+            data['docente'] = docente;
+            data['mat_docente'] = mat_docente;
+            data['aula'] = aula;
+            data['posti_liberi'] = posti_liberi;
+
+            const dataToSend = JSON.stringify(data);
+            let dataReceived = "Something went wrong";
+
+            fetch("./bakand", {
+                method: "post",
+                headers: {"Content-Type": "application/json"},
+                body: dataToSend
+            })
+                .then(resp => {
+                    if (resp.status === 200) {
+                        return resp.text()
+                    } else {
+                        return Promise.reject("server")
+                    }
+                })
+                .then(data => {
+                    dataReceived = data
+                    document.getElementById("prenotaDialog").innerHTML = `<p>${dataReceived}</p>`;
+                    $("#prenotaDialog").dialog("open");
+                })
+                .catch(err => {
+                    if (err === "server") return
+                    console.log(err)
+                })
+        }
+
+        function onClickAnnullaPrenota(id_val) {
+
+            window.location.href = "./nope";
+
+        }
+
+        function onClickStampaRicevuta(id_preno) {
+            window.location.href = "./nope";
+        }
+    </script>
+
+    <link href="https://didattica.polito.it/favicon.ico" rel="shortcut icon">
+
+</head>
+<body data-new-gr-c-s-check-loaded="14.1018.0" data-gr-ext-installed="">
+
+<!--                          header-->    <!-- barra del titolo -->
+<div class="c_titleBar">
+    <div class="clearfix" style="height: 100%;padding-left:10px;padding-right:10px;"><!--tolta class gridContainer -->
+        <div class="c_relative">
+            <div class="c_logoPoli2"></div>
+            <div class="row">
+                <div class="col-sm-12 col-xs-6 logo_header" style="padding-top:4px;"><a
+                        href="./nope"><img src="static/images/Logo_popi_popi.jpg" height="110px"></a></div>
+            </div>
+            <div class="c_titoliPagina">
+                <div id="titoloPagina" class="c_titoloPagina buttonMode">Servizi per la didattica</div>
+                <div id="sottotitoloPagina" class="c_sottotitoloPagina">PORTALE DELLA DIDATTICA</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="c_strisciaArancione"></div>    <!-- fine header -->
+<nav id="nav_menu" class="navbar navbar-default">
+    <div class="container-fluid">            <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header" id="menu_small">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar"><span class="sr-only">Toggle navigation</span> <span
+                    class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button>
+            <ul class="nav navbar-nav navbar-right fotina_toggle">
+                <li>
+                    <div class="testo_img"><p>31337</p><a
+                            href="./nope"
+                            class="link_img">Logout</a></div>
+                </li>
+                <li class="dropdown">
+                    <div class="testo_img"><a class="link_img"
+                                              href="./nope"
+                                              data-toggle="dropdown" role="button" aria-haspopup="true"
+                                              aria-expanded="false" style="padding:0px;"><img id="foto_menu1"
+                                                                                              src="static/P031337.JPG"
+                                                                                              style="border:0px;width:36px;height:38px;-webkit-border-radius: 50%;-moz-border-radius: 50%;border-radius: 50%;"></a>
+
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div><img
+                                        src="static/consultazionidati-aggiornamentoindirizzo_q.png"
+                                        style="width:24px;margin-right:5px;margin-left:5px;"><a
+                                        href="./nope">Account</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>            <!-- Collect the nav links, forms, and other content for toggling -->
+        <div id="navbar" class="navbar-collapse collapse" aria-expanded="true">
+            <ul class="nav navbar-nav" id="menu_pag_stud">
+                <li><a href="./nope"> La mia
+                    didattica</a></li>
+                <li class="active"><a
+                        href="./nope">
+                    Segreteria online</a></li>
+                <li><a href="./nope">
+                    Materiale</a></li>
+                <li><a href="./nope">
+                    Lingue</a></li>
+                <li>
+                    <a href="./nope">
+                        Curriculum</a></li>
+                <li><a href="./nope"> Stage</a>
+                </li>
+                <li><a href="./nope"> Job</a>
+                </li>
+                <li><a href="./nope">
+                    Account</a></li>
+                <li><a href="./nope"> Ticket </a></li>
+                <li><a href="./nope"> Posta <span class="badge"
+                                                 style="color:#FF7C11;background-color:#fafafa;"
+                                                 data-toggle="tooltip"
+                                                 title="NaN mail da leggere">NaN</span></a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right fotina_toggle_2">
+                <li>
+                    <div class="testo_img"><p>31337</p><a
+                            href="./nope"
+                            class="link_img">Logout</a></div>
+                </li>
+                <li class="dropdown">
+                    <div class="testo_img"><a class="link_img"
+                                              href="./nope"
+                                              data-toggle="dropdown" role="button" aria-haspopup="true"
+                                              aria-expanded="false" style="padding:0px;"><img id="foto_menu2"
+                                                                                              src="static/P031337.JPG"
+                                                                                              style="border:0px;width:36px;height:38px;-webkit-border-radius: 50%;-moz-border-radius: 50%;border-radius: 50%;"></a>
+
+                        <ul class="dropdown-menu">
+                            <li>
+                                <div><img
+                                        src="static/consultazionidati-aggiornamentoindirizzo_q.png"
+                                        style="width:24px;margin-right:5px;margin-left:5px;"><a
+                                        href="./nope">Account</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div><!-- /.container-fluid -->         </nav>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div id="leftbar" class="col-lg-2 hidden-xs hidden-sm hidden-md sidebar-offcanvas" role="navigation">
+            <script>  $(function () {
+                $("#note_accordion").accordion({
+                    active: false,
+                    collapsible: true,
+                    heightStyle: "content",
+                    icons: false
+                });
+            });  </script>
+            <div style="width:100%;text-align:center"><img id="foto_colsx" src="static/P031337.JPG"
+                                                           width="150">
+                </u></strong><br><strong>Pwnlo M0FLAG</strong><br>
+                <div class="RegionBorderMao" style="text-align:left;"><p> Codice fiscale: XXXXXXXXXXXXXXXX<br> Data di
+                    nascita: 0D/0A/1337<br> Luogo di nascita: [object Object]</p>
+                    <p>Corso di Laurea in<br><a class="policorpolink"
+                                                href="./nope"
+                                                target="_blank"><strong>CYBER SECUTIRY</strong></a><br><a
+                            class="policorpolink"
+                            href="./nope"
+                            target="_blank">Collegio di Ingegneria Informatica, del Cinema e
+                        Meccatronica</a><br>Codice Classe <strong>L-0 (DM999)</strong><br>Percorso<br></p>
+                    <p>Ultima iscrizione<br><strong>2020/2021 - Tempo pieno</strong><br>1^ iscrizione, coorte 1000/01
+                        <br>Situazione carriera: <span class="text-success"><strong>ATTIVO</strong></span><br></p></div>
+            </div>
+        </div>
+
+        <div id="content" class="col-xs-12 col-lg-10">
+            <div id="mainpanel" class="panel panel-primary">
+                <div class="panel-heading-polito">
+                    <div class="image"><img src="static/esami_q.png"></div>
+                    <div class="title">Prenotazione esami</div>
+                    <div class="line">&nbsp;</div>
+                </div>
+
+                <div class="panel-body">
+
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <h2>SITUAZIONE PRENOTAZIONE ESAMI</h2> <br>
+                            <span>Visualizza le Prenotazioni attive e	gli Appelli disponibili dei prossimi 4 mesi
+									</span>
+                            <div>
+                                <i><b>N.B.</b>Vengono visualizzati gli appelli in calendario per i quali lo studente
+                                    ha gi&agrave; effettuato una prenotazione o per i quali &egrave; possibile
+                                    effettuarla. </i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GRIGLIA OUTPUT APPELLI -->
+
+
+                    <div class="panel panel-success">
+                        <div class="panel-heading">Prenotazioni attive</div>
+                        <div class="panel-body table-scroll">
+
+                            <table class="table table-striped table-condensed table-hover">
+                                <thead>
+                                <tr>
+                                    <th><span>Cod.Ins.</span></th>
+                                    <th><span>Nome Ins.</span></th>
+                                    <th><span>Data-ora</span></th>
+                                    <th><span>Sede-Aula</span></th>
+                                    <th><span>Desc. tipo</span></th>
+                                    <th><span>Docente</span></th>
+                                    <th><span>Scadenza</span></th>
+                                    <th><span>pren.</span></th>
+                                    <th><span>Note</span></th>
+                                    <th><span>Modalit&agrave; scritto</span></th>
+                                    <th><span>Modalit&agrave; orale</span></th>
+                                    <th><span>Annulla</span></th>
+
+                                    <th><span>Stampa</span></th>
+
+                                </tr>
+                                </thead>
+                                <tbody>
+
+
+                                <tr>
+                                    <td>
+                                        <b>256RSA&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        <b>Destroyesing RSA&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        03-07-2021 11:00
+                                    </td>
+                                    <td>
+                                        TORINO - &nbsp;
+                                    </td>
+                                    <td>
+                                        Esami scritti a risposta aperta o chiusa tramite PC
+                                    </td>
+                                    <td>
+                                        CLAUS SANTA
+                                    </td>
+                                    <td>
+                                        29-06-2021 14:00&nbsp;
+                                    </td>
+
+
+                                    <td>
+                                        112&nbsp;
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <div>
+
+                                            &nbsp;
+
+
+                                        </div>
+                                    </td>
+
+
+                                    <td></td>
+                                    <td></td>
+
+
+                                    <td class="text-center">
+
+
+                                            <span class="glyphicon glyphicon-remove" data-toggle="tooltip"
+                                                  title="Annulla la prenotazione" data-placement="top"
+                                                  onclick="onClickAnnullaPrenota(4694542)"></span>
+
+
+                                    </td>
+
+
+                                    <td class="text-center">
+                                            <span><img class="imagelink"
+                                                       src="static/acrobat_pdf_icon.gif"
+                                                       data-toggle="tooltip" title="Stampa ricevuta di prenotazione"
+                                                       data-placement="top"
+                                                       onclick="onClickStampaRicevuta(4694542)"></span>
+                                    </td>
+
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--close panel-body -->
+                    </div>
+                    <!--close panel -->
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Appelli disponibili per la prenotazione</div>
+                        <div class="panel-body table-scroll">
+
+                            <table class="table table-striped table-condensed table-hover">
+                                <thead>
+                                <tr>
+                                    <th><span>Cod.Ins.</span></th>
+                                    <th><span>Nome Ins.</span></th>
+                                    <th><span>Data-ora</span></th>
+                                    <th><span>Sede-Aula</span></th>
+                                    <th><span>Desc. tipo</span></th>
+                                    <th><span>Docente</span></th>
+                                    <th><span>Scadenza</span></th>
+                                    <th><span>pren.</span></th>
+                                    <th><span>Note</span></th>
+                                    <th><span>Prenota</span></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+
+                                <tr>
+                                    <td>
+                                        <b>256RSA&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        <b>Destroyesing RSA&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        19-07-2021 14:00
+                                    </td>
+                                    <td>
+                                        TORINO - &nbsp;
+                                    </td>
+                                    <td>
+                                        Esami scritti a risposta aperta o chiusa tramite PC
+                                    </td>
+                                    <td>
+                                        CLAUS SANTA
+                                    </td>
+                                    <td>
+                                        13-07-2021 14:00&nbsp;
+                                    </td>
+
+
+                                    <td>
+                                        20&nbsp;
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <div>
+
+                                            &nbsp;
+
+
+                                        </div>
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <div>
+
+
+                                                <span class="glyphicon glyphicon-ban-circle" data-toggle="tooltip"
+                                                      title="ESISTE GIA&#39; UNA PRENOTAZIONE PER L&#39;ESAME IN QUESTIONE"
+                                                      data-placement="top"></span>
+
+
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+
+                                <tr>
+                                    <td>
+                                        <b>01ELEET&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        <b>Hacktivism&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        05-07-2021 17:00
+                                    </td>
+                                    <td>
+                                        TORINO - AULA VIRTUALE&nbsp;
+                                    </td>
+                                    <td>
+                                        Esami scritti a risposta aperta o chiusa tramite PC
+                                    </td>
+                                    <td>
+                                        ROBOT MR
+                                    </td>
+                                    <td>
+                                        30-06-2021 14:00&nbsp;
+                                    </td>
+
+
+                                    <td>
+                                        167&nbsp;
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <div>
+
+
+                                                <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip"
+                                                      title="Please be advised that to take the test you need your credential for the PORTALE DELLA DIDATTICA. In the REMOTE EXAMS part you will find the link to the test. At the begging of the test, following respondus instructions, you must show a valid photo ID to the webcam in such a way that it can be read."
+                                                      data-placement="top"></span>
+
+                                        </div>
+                                    </td>
+
+
+                                    <td class="text-center">
+
+
+                                            <span class="glyphicon glyphicon-ban-circle" data-toggle="tooltip"
+                                                  title="Scaduti i termini per la prenotazione."
+                                                  data-placement="top"></span>
+
+
+                                    </td>
+
+
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <b>B0000M&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        <b>AI Bombing&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        13-06-2021 08:45
+                                    </td>
+                                    <td>
+                                        TORINO - &nbsp;
+                                    </td>
+                                    <td>
+                                        Esami scritti a risposta aperta o chiusa tramite PC
+                                    </td>
+                                    <td>
+                                        NELLO SICUREZZA
+                                    </td>
+                                    <td>
+                                        10-06-2021 14:00&nbsp;
+                                    </td>
+
+
+                                    <td>
+                                        70&nbsp;
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <div>
+
+
+                                                <span class="glyphicon glyphicon-info-sign" data-toggle="tooltip"
+                                                      title="Connect to the Lockdown Browser at 8:30.   The written exam will be held on June 14, at 3p.m."
+                                                      data-placement="top"></span>
+
+                                        </div>
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <div>
+                                        <span><img class="imagelink"
+                                                   src="static/icon_confirm_form.gif"
+                                                   data-toggle="tooltip" title="Prenota questo appello"
+                                                   data-placement="top" onclick="onClickPrenota(736,&#39;B0000M&#39;,&#39;&#39;,&#39;&#39;, &#39;2021-07-13&#39;,
+                                          2021, &#39;AI Bombing&#39;, &#39;NELLO SICUREZZA&#39;, &#39;30120&#39;, &#39;13-09-2021 08:45&#39;,
+                                          &#39; &#39;, &#39;Esami scritti a risposta aperta o chiusa tramite PC&#39;, &#39;Connect to the Lockdown Browser at 8:30.   The written exam will be held on September 14, at 3p.m.&#39;, 999, &#39;N&#39; , &#39;N&#39;, &#39;S&#39;)">
+                                        </span>
+
+
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+
+
+                                <tr>
+                                    <td>
+                                        <b><3CYCL3S&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        <b>Brutte Forze Attacks&nbsp;</b>
+                                    </td>
+                                    <td>
+                                        14-07-2021 13:00
+                                    </td>
+                                    <td>
+                                        TORINO - AULA VIRTUALE&nbsp;
+                                    </td>
+                                    <td>
+                                        Esami scritti su carta con videosorveglianza dei docenti
+                                    </td>
+                                    <td>
+                                        CEFFO BRUTTO
+                                    </td>
+                                    <td>
+                                        06-07-2021 14:00&nbsp;
+                                    </td>
+
+
+                                    <td>
+                                        130&nbsp;
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <div>
+
+                                            &nbsp;
+
+
+                                        </div>
+                                    </td>
+
+
+                                    <td class="text-center">
+                                        <div>
+                                  <span><img class="imagelink"
+                                             src="static/icon_confirm_form.gif"
+                                             data-toggle="tooltip" title="Prenota questo appello"
+                                             data-placement="top" onclick="onClickPrenota(999,&#39;<3CYCL3S&#39;,&#39;&#39;,&#39;&#39;, &#39;2021-07-14&#39;,
+                                          2021, &#39;Physics I(ZZ&#39;, &#39;CEFFO BRUTTO&#39;, &#39;2063&#39;, &#39;14-07-2021 13:00&#39;,
+                                          &#39;AULA VIRTUALE&#39;, &#39;Esami scritti su carta con videosorveglianza dei docenti&#39;, &#39;&#39;, 999, &#39;N&#39; , &#39;N&#39;, &#39;N&#39;)">
+                                        </span>
+
+
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--close panel-body -->
+                    </div>
+                    <!--close panel -->
+
+
+                </div>
+                <!-- Chiude panel-default -->
+            </div>
+            <!-- Chiude panel -->
+            </form>
+
+            <form action="https://sid.studenti.polito.it/prenoesami/listaAppelli.do">
+                <input type="hidden" name="event" value="">
+                <input type="hidden" id="notaVera" name="nota" value="">
+            </form>
+
+        </div>
+        <!-- Chiude col-sm-10 -->
+    </div>
+    <!-- Chiude row -->
+</div>
+
+<!--footer-->
+<div style="height: 30px;"></div>
+<div style="height: 2px; position: relative; width: 100%; background-color: #003576;">
+    <hr style="display:none;">
+</div>
+<div style="height: 5px; height: 5px;"><!--12345678901234567890-->
+    <hr style="display:none;">
+</div>
+<div style=" position: relative; margin-left: 10px; margin-right: 10px;">
+    <div style=" position: relative;  height: 40px;  text-align: right;  font-size: 11px;  color: #003576;  line-height: 16px;">
+        <span style="font-size:12px;">&copy; Politecnico di Torino</span> <br><span style="font-size:11px;">Corso Duca degli Abruzzi, 24 - 10129 Torino, ITALY </span>
+    </div>
+    <div style=" border:0px solid grey; position: absolute; top: 0px; left: 0px; height: 20px; "><a
+            style="font-size:13px;color: #003576;"
+            href="./nope">Contatti</a></div>
+</div>    <!-- fine footer -->
+<div style="position: relative; height: 10px;"></div>
+
+<div id="prenotaDialog" title="Risultato">
+    <p>Originale</p>
+</div>
+</body>
+</html>

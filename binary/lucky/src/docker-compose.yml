@@ -1,0 +1,8 @@
+version: "3.6"
+
+services:
+  random:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "15042:15042"

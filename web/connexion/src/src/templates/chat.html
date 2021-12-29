@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<!-- <link rel="stylesheet" type="text/css" href="../static/css/style.css" /> -->
+<style>
+	.connexion_chat_container {
+		border: 2px solid #dedede;
+		background-color: #f1f1f1;
+		border-radius: 5px;
+		padding: 10px;
+		margin: 10px 0;
+	}
+
+	.connexion_chat_darker {
+		border-color: #ccc;
+		background-color: rgb(150, 150, 150);
+	}
+
+	.connexion_chat_container::after {
+		content: "";
+		clear: both;
+		display: table;
+	}
+
+</style>
+{% endblock %}
+
+{% block content %}
+	<h2>{% block title %}{{ correspondent }}{% endblock %}</h2>
+	{% if (users[0]==1 and users[1]==2) or (users[0]==2 and users[1]==1) %}
+		<h4> ptm{y0u_ar3_on_7he_righ7_w4y_n0w_th3_fun_b3gin5} </h4>
+		<p> Be aware: there is a second flag inside this service, find it out! </p>
+	{% endif %}
+	<div  id="chat_div" style="visibility:hidden;">
+	{% for message in chat %}
+		{% if message['sender']==users[0] %}
+			<div class="connexion_chat_container connexion_chat_darker" style="word-break: break-all; word-wrap: break-word; text-align: right;">
+		{% else %}
+			<div class="connexion_chat_container" style="word-break: break-all; word-wrap: break-word; text-align: left;">
+		{% endif %}
+					{{ message['messagetext'] }}
+			</div>
+			<!-- <br> -->
+	{% endfor %}
+
+	{% if users[1] == 2 %}
+	<form method="post" id="chat_form" style="visibility:hidden">
+		<div class="form-group">
+		{% for msg in bot_msg %}
+			<button type="submit" class="btn btn-primary" name="message" value="{{ msg }}">{{ msg }}</button>
+		{% endfor %}
+		</div>
+	</form>
+	{% else %}
+	<form method="post" id="chat_form" style="visibility:hidden">
+		<div class="form-group">
+			<textarea id="message_area" name="message"
+					placeholder="Send new message" class="form-control"
+					value="{{ request.form['message'] }}"></textarea>
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-primary" onclick=encrypt_message("message_area")>Send</button>
+		</div>
+	</form>
+	{% endif %}
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+	<script>
+		function encrypt(message = '', key = ''){
+			var message = CryptoJS.AES.encrypt(btoa(unescape(encodeURIComponent(message))), key/*, { mode: CryptoJS.mode.CBC }*/);
+			return message.toString();
+		}
+		function decrypt(message = '', key = ''){
+			var code = CryptoJS.AES.decrypt(message, key /*, { mode: CryptoJS.mode.CBC }*/);
+			var decryptedMessage = code.toString(CryptoJS.enc.Utf8);
+			var decodedMessage = decodeURIComponent(escape(atob( decryptedMessage )));
+			return decodedMessage;
+		}
+		var url = "/getkey/{{ users[0] }}/{{ users[1] }}";
+		var splitted_cookie = document.cookie.split("; ");
+		var key = undefined;
+		var req = new XMLHttpRequest();
+		req.open("GET", url, false);
+		req.send(null);
+		if(req.status == 200){
+			key = req.responseText;
+			document.cookie = url + "=" + key;
+		}
+		// else{
+			// alert("Unable to retrieve decryption key");
+		// }
+		if(key == undefined){
+			for(var i=0; i<splitted_cookie.length; i++){
+				var s = splitted_cookie[i].split("=");
+				if(s[0] === url){
+					key = s[1];
+					break;
+				}
+			}
+		}
+		if(key == undefined){
+			alert("Unable to retrieve decryption key");
+		}else{
+			var div = document.getElementById("chat_div");
+			var msgs = document.getElementsByClassName("connexion_chat_container");
+			for(var i=msgs.length-1; i>=0; i--){
+				var s = msgs[i].textContent.trim()
+				try{
+					var ns = decrypt(s, key);
+				}catch(err){
+					var ns = "cannot decrypt this message";
+				}
+				msgs[i].textContent = ns;
+			}
+			div.style["visibility"] = "";
+			document.getElementById("chat_form").style["visibility"] = "";
+		}
+		window.scrollTo(0,document.body.scrollHeight);
+		function encrypt_message(id){
+			var e = document.getElementById("message_area");
+			var c = encrypt(e.value, key);
+			e.value = c;
+		}
+	</script>
+{% endblock %}
